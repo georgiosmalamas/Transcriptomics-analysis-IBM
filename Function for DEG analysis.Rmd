@@ -98,6 +98,6 @@ return(w)
 
 ##Run the function
 
-perform_de_analysis(data= "GSE48280",cohort_case_name= "inclusion body myositis",cohort_control_name="healthy control")
+perform_de_analysis(data= "GSE48280",cohort_case_name= "inclusion body myositis",cohort_control_name="healthy control") # GEO example
 
-perform_de_analysis(data= "E-MTAB-2141.sdrf.txt",cohort_case_name= "inclusion body myositis ",cohort_control_name="normal")
+perform_de_analysis(data= "E-MTAB-2141.sdrf.txt",cohort_case_name= "inclusion body myositis ",cohort_control_name="normal") # Local/ArrayExpress example
