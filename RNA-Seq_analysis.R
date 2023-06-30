@@ -27,14 +27,10 @@ library(biomaRt)
 
 
 
-data <- "GSE151757"
-cohort_control_name <- "Amputee"
-cohort_case_name <- "Inclusion body myositis"
-
 perform_de_analysis <-function (data,cohort_case_name,cohort_control_name){
   
   if (file.exists(data)== TRUE) {
-  df<-read.delim(data) #Formal expression set
+  df<-read.delim(data) #Data
   datainfo <- Biobase::pData(df) #datainfo
   columnname <- datainfo[, c(which(grepl(cohort_control_name , datainfo)))]
   datainfo <- subset(datainfo, columnname[ncol(columnname)]== cohort_case_name|columnname[ncol(columnname)]== cohort_control_name) #datainfo for disease 
@@ -47,7 +43,7 @@ perform_de_analysis <-function (data,cohort_case_name,cohort_control_name){
   extra_col <- as.data.frame(str_split_fixed(row.names(dat), ";",2))
   
   } else if (file.exists(data)!= TRUE) {
-  df <- getGEO(data)[[1]]
+  df <- getGEO(data)[[1]] #Data from GEO
   datainfo <- Biobase::pData(df)
   columnname <- datainfo[, c(which(grepl(cohort_control_name , datainfo)))]
   datainfo <- subset(datainfo, columnname[ncol(columnname)]== cohort_case_name|columnname[ncol(columnname)]== cohort_control_name)  
@@ -58,12 +54,11 @@ perform_de_analysis <-function (data,cohort_case_name,cohort_control_name){
   b2 = read.csv(fnames[1],sep="")
   k = datainfo[,1]
   dat <- b2[,k] 
-  
   extra_col <- as.data.frame(str_split_fixed(row.names(dat), ";",2))
   
   
   } else {
-    print("No analysis for you")
+    print("No analysis for you") # Error message
   }
   
   ## Creating metaData object 
@@ -75,13 +70,12 @@ perform_de_analysis <-function (data,cohort_case_name,cohort_control_name){
   
   design <- as.character(metadata[,1])
   colnames(metadata)[1] <- "design"
-  ## The analysis
+  ## The  DESEQ2 normalization and analysis
   
   dds <- DESeqDataSetFromMatrix(countData = round(dat), colData = metadata, design = ~design)
   dds <- DESeq(dds)
   res <- results(dds)
   res2 <-as.data.frame(res)
-  
   
   ## Selecting protein coding RNAs
   
@@ -97,7 +91,7 @@ perform_de_analysis <-function (data,cohort_case_name,cohort_control_name){
     uniqueRows = TRUE)
   
   protein_coding_ENSG <- lookuptable$ensembl_gene_id[lookuptable$gene_biotype == "protein_coding"]
-  
+  #Getting the DEGs
   valid <- res2[!is.na(res2$padj), ]
   colvalid <- substr(rownames(valid), 1, 15)
   valid <- valid[substr(rownames(valid), 1, 15) %in% protein_coding_ENSG, ]
@@ -110,5 +104,5 @@ perform_de_analysis <-function (data,cohort_case_name,cohort_control_name){
   return(w)
 }
 
-
+#Run the function
 perform_de_analysis("GSE151757","Inclusion body myositis","Amputee")
