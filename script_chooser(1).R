@@ -1,17 +1,14 @@
-#!/usr/bin/env Rscript
 
-# Retrieve the condition input
-condition <- commandArgs(trailingOnly = TRUE)[1]
+#For microarrays platform
+platform <- "microarrays"
 
-# Condition
-
-if (condition == "rna_seq") {
-  t <-
-} else if (condition == "microarrays") {
-  result <- FALSE
+if (platform == "microarrays") {
+# Run the R script for microarrays
+source("test_microarrays_analysis.R")
+} else if (platform == "RNA-seq") {
+# Run the R script for RNA-seq
+source("RNA-Seq_analysis.R")
 } else {
-  stop("Invalid condition provided")
+# Print an error message if the condition is not valid
+stop("Invalid condition. Please choose either microarrays or RNA-seq.")
 }
-
-# Print
-write.table(result, "chooser.txt")
