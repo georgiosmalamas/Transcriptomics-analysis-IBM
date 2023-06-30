@@ -1,4 +1,4 @@
-## LIbraries
+## Libraries
 
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
@@ -19,40 +19,31 @@ library(openxlsx)
 
 
 ## Function
-
 perform_de_analysis <-function (data,cohort_case_name,cohort_control_name) {
   
-  
-  
   if (file.exists(data)== TRUE) {
-    SDRF <- read.delim(data)
-    
+    SDRF <- read.delim(data) #Data
     column_data<-SDRF[, c(which(grepl(cohort_case_name, SDRF)))]
-    
     SDRF <-  subset(SDRF, column_data[ncol(column_data)]== cohort_case_name|column_data[ncol(column_data)]== cohort_control_name)
-    
     columnnames <- SDRF[, c(which(grepl("CEL" , SDRF)))]
-    
     SDRF <- AnnotatedDataFrame(SDRF)
-    
-    
-    raw_data <- oligo::read.celfiles(columnnames[1], verbose = FALSE, phenoData = SDRF)
+    raw_data <- oligo::read.celfiles(columnnames[1], verbose = FALSE, phenoData = SDRF) #Read local files based on datainfo
     
     stopifnot(validObject(raw_data))
     
-    palmieri_eset_norm <- oligo::rma(raw_data, target = "core")
+    palmieri_eset_norm <- oligo::rma(raw_data, target = "core") # RMA normalization
     
     
-    design <- as.character(Biobase::pData(palmieri_eset_norm)[,ncol(SDRF)])
+    design <- as.character(Biobase::pData(palmieri_eset_norm)[,ncol(SDRF)]) 
     design_palmieri <-model.matrix(~0 + design)
     colnames(design_palmieri) = c("disease","control")
     
     
-    fit <- lmFit(palmieri_eset_norm,design_palmieri)
+    fit <- lmFit(palmieri_eset_norm,design_palmieri) #fitting the model
     
   } else if (file.exists(data)!= TRUE) {
     
-    expdf <-getGEO(data)[[1]]
+    expdf <-getGEO(data)[[1]] #Data from GEO
     SDRF <- Biobase::pData(expdf)
     
     columnname <- SDRF[, c(which(grepl(cohort_case_name , SDRF)))]
@@ -68,13 +59,11 @@ perform_de_analysis <-function (data,cohort_case_name,cohort_control_name) {
     
     design<- as.character(colnames(expr_disease))
     design_palmieri <-model.matrix(~0 + design)
-    colnames(design_palmieri) = c("control","disease")
-    
-    
+    colnames(design_palmieri) = c("control","disease") # Selecting for modeling
     fit <- lmFit(expr_disease,design_palmieri)
     
   } else {
-    print("No analysis for you")
+    print("No analysis for you") #Error message
   }
   
   
