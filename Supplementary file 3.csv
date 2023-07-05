@@ -1,0 +1,22 @@
+Metadata used for the realization of the workflow,,,
+FAIR metadata,Function example,Explanation,Machine-readable metadata
+,,,
+Genetic Platform,"platform == ""microarrays"" or ""RNA-seq""",Selecting the genetic platform (RNA-Seq or Microarrays),[ NCIT:C44282 / EFO:0008896 ]
+Data source,"data = ""GSE151757""", The dataset under examination,[NCIT:C16493 ]
+Cohort case,"cohort_case_name == ""IBM""",The name of the disease under examination,[OMIM:147421 ]
+Cohort control,"cohort_control_name == ""Normal skeletal tissue""",The name of the control group,[PATO:0000461]
+,,,
+,,,
+Metadata produced through the realization of this workflow,,,
+FAIR metadata,Function example,Explanation,Machine-readable metadata
+,,,
+Normalization,oligo::rma(),RMA normalization,[NCIT:C64235]
+Normalization,DESeq2::DESeq(),DESeq2 normalization,
+Linear models,"model.matrix(), limma::lmFit(),
+makeContrasts(), contrasts.fit(),
+eBayes()",Making models for comparing control and disease expression levels with limma or DESeq2 workflow,"[generalized_linear:model], [OBCS:0000168]"
+"Gene Symbol, Gene Identifiers"," clusterProfiler::bitr(genelist, fromType=""SYMBOL"", toType=""ENTREZID"", OrgDb=""org.Hs.eg.db"")",Convertion of  gene symbols to gene identifiers ,"[NCIT:C48664], [NCIT:C43568]"
+DEGs," DESeq2::results(), limma::topTable()",Selecting all genes that are dysregulated,[SWO:7000018]
+"FDR
+Multiple Testing Correction","padj <- valid[valid$padj<0.05),]",Selecting the FDR corrected DEGs,"[OBI:0200163],  [OBI:0200089 ]"
+Robust Rank Aggregation Analysis,RobustRankAggreg::aggregateRanks(),Different gene lists in a single rank list based on the original p values,[NCIT:C48904]
